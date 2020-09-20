@@ -18,7 +18,7 @@ CREATE TABLE `trades` (
   `ticker` text,
   `buyer` text,
   `seller` text,
-  `amount` decimal(65, 2),
+  `amount`int(11),
   `price` decimal(65, 2),
   `time` text,
   PRIMARY KEY (`id`)

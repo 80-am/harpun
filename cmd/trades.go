@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"fmt"
 	"strconv"
     "strings"
-
 
 	"github.com/80-am/harpun/db"
 	"github.com/gocolly/colly/v2"
@@ -15,7 +13,7 @@ type Trade struct {
 	Ticker string
 	Buyer  string
 	Seller string
-	Amount float64
+	Amount int64
 	Price  float64
 	Time   string
 }
@@ -29,7 +27,8 @@ func GetDailyTrades(s Stock) {
 		t.Ticker = s.Ticker
 		t.Buyer = e.ChildText(".tLeft:nth-child(1)")
 		t.Seller = e.ChildText(".tLeft:nth-child(2)")
-		t.Amount, _ = strconv.ParseFloat(strings.Replace(e.ChildText(":nth-child(3)"), ",", ".", -1), 8)
+		a := e.ChildText(":nth-child(3)")
+		t.Amount, _ = strconv.ParseInt(strings.Join(strings.Fields(strings.TrimSpace(a)), ""),10, 64)
 		t.Price, _ = strconv.ParseFloat(strings.Replace(e.ChildText(":nth-child(4)"), ",", ".", -1), 8)
 		t.Time = e.ChildText(".last")
 		if t.Time != "" {
@@ -41,16 +40,26 @@ func GetDailyTrades(s Stock) {
 	updateTrades(trades)
 }
 
+func getLastTrade(t Trade) string {
+	r := db.QueryRow("SELECT time FROM trades WHERE ticker = (?) ORDER BY time DESC LIMIT 1;", t.Ticker)
+	var lastTrade string
+	r.Scan(&lastTrade)
+	return lastTrade
+}
+
 func updateTrades(t []Trade) {
 	q := "INSERT INTO trades(ticker, buyer, seller, amount, price, time) VALUES "
 	vals := []interface{}{}
-
-	for i := range t {
-		fmt.Println(t[i].Amount, t[i].Price)
-	    q += "(?, ?, ?, ?, ?, ?),"
-		vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, t[i].Time)
+	lastTrade := getLastTrade(t[0])
+	for i := len(t)-1; i >= 0; i-- {
+		if t[i].Time > lastTrade {
+			q += "(?, ?, ?, ?, ?, ?),"
+			vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, t[i].Time)
+		}
 	}
 	q = q[0:len(q)-1]
-	stmt := db.Prepare(q)
-	stmt.Exec(vals...)
+	if len(vals) > 0 {
+		stmt := db.Prepare(q)
+		stmt.Exec(vals...)
+	}
 }
