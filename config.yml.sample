@@ -1,0 +1,4 @@
+# db
+user: "your db user"
+password: "your db password"
+schema: "/harpun"
