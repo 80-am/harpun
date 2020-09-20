@@ -35,9 +35,11 @@ func GetDailyTrades(s Stock) {
 			trades = append(trades, t)
 		}
 	})
-	url := "https://www.avanza.se/aktier/dagens-avslut.html/" + s.ID + "/" + s.Ticker
+	url := "https://www.avanza.se/aktier/dagens-avslut.html/" + s.ID + "/" + s.Name
 	c.Visit(url)
-	updateTrades(trades)
+	if len(trades) > 0 {
+		updateTrades(trades)
+	}
 }
 
 func getLastTrade(t Trade) string {
