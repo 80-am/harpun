@@ -19,7 +19,7 @@ CREATE TABLE `trades` (
   `buyer` text,
   `seller` text,
   `amount`int(11),
-  `price` decimal(65, 2),
+  `price` text,
   `time` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

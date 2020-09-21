@@ -15,7 +15,7 @@ type Trade struct {
 	Buyer  string
 	Seller string
 	Amount int64
-	Price  float64
+	Price  string
 	Time   string
 }
 
@@ -30,7 +30,7 @@ func GetDailyTrades(s Stock) {
 		t.Seller = e.ChildText(".tLeft:nth-child(2)")
 		a := e.ChildText(":nth-child(3)")
 		t.Amount, _ = strconv.ParseInt(strings.Join(strings.Fields(strings.TrimSpace(a)), ""),10, 64)
-		t.Price, _ = strconv.ParseFloat(strings.Replace(e.ChildText(":nth-child(4)"), ",", ".", -1), 8)
+		t.Price = strings.Replace(e.ChildText(":nth-child(4)"), ",", ".", -1)
 		t.Time = e.ChildText(".last")
 		if t.Time != "" {
 			trades = append(trades, t)
