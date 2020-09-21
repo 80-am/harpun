@@ -21,3 +21,17 @@ user: "your db user"
 password: "your db password"
 schema: "/harpun"
 ```
+
+Init stocks table with [First North Stockholm](http://www.nasdaqomxnordic.com/shares/listed-companies/first-north) by parsing `-initDb=true` or by calling `AddStocks()` with a custom set of stocks.
+```go
+func AddStocks(s []Stock) {
+	q := "INSERT INTO stocks(avanzaId, ticker, name) VALUES "
+	vals := []interface{}{}
+	for i := range s {
+		s[i].Ticker = getTicker(s[i])
+		q += "(?, ?, ?),"
+		vals = append(vals, s[i].ID, s[i].Ticker, s[i].Name)
+	}
+    q = q[0:len(q)-1]
+    ...
+```

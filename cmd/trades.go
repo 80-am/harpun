@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"strconv"
-    "strings"
+	"strings"
+	"time"
 
 	"github.com/80-am/harpun/db"
 	"github.com/gocolly/colly/v2"
@@ -53,10 +54,12 @@ func updateTrades(t []Trade) {
 	q := "INSERT INTO trades(ticker, buyer, seller, amount, price, time) VALUES "
 	vals := []interface{}{}
 	lastTrade := getLastTrade(t[0])
+	date := time.Now().Format("2006-01-02")
 	for i := len(t)-1; i >= 0; i-- {
 		if t[i].Time > lastTrade {
 			q += "(?, ?, ?, ?, ?, ?),"
-			vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, t[i].Time)
+			dateTime := date + " " + t[i].Time
+			vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, dateTime)
 		}
 	}
 	q = q[0:len(q)-1]
