@@ -4,7 +4,7 @@
 CREATE TABLE `stocks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `avanzaId` int(11),
-  `ticker` text,
+  `ticker` text UNIQUE,
   `name` text,
   PRIMARY KEY (`id`),
   KEY `avanzaId` (`avanzaId`)

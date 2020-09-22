@@ -1,3 +1,4 @@
 config.yml
+*.log
 *.swp
 .DS_Store

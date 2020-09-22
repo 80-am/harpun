@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"flag"
+	"log"
+	"os"
 
 	"github.com/80-am/harpun/db"
 )
@@ -9,11 +11,23 @@ import (
 var c Config
 var initDb bool
 var config string
+var (
+    WarningLogger *log.Logger
+    InfoLogger    *log.Logger
+    ErrorLogger   *log.Logger
+)
 
 func init() {
 	flag.BoolVar(&initDb, "initDb", false, "Initializes your stocks table with First North Stockholm data")
 	flag.StringVar(&config, "config", "", "Path to your config.yml")
-    flag.Parse()
+	flag.Parse()
+	file, err := os.OpenFile("harpun.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+    if err != nil {
+        log.Fatal(err)
+    }
+    InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime)
+    WarningLogger = log.New(file, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+    ErrorLogger = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 }
 
 func isFlagPassed(name string) bool {
@@ -28,9 +42,11 @@ func isFlagPassed(name string) bool {
 
 // Main for harpun app
 func Main() {
+	InfoLogger.Println("Harpun started.")
 	c.GetConfig(config)
 	database, err := db.Init(c.DbUser, c.DbPassword, c.DbSchema)
 	if err != nil {
+		ErrorLogger.Println(err.Error())
 		panic(err.Error())
 	}
 	defer database.Close()

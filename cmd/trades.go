@@ -55,16 +55,21 @@ func updateTrades(t []Trade) {
 	vals := []interface{}{}
 	lastTrade := getLastTrade(t[0])
 	date := time.Now().Format("2006-01-02")
+	newTrades := 0
 	for i := len(t)-1; i >= 0; i-- {
-		if t[i].Time > lastTrade {
+		dateTime := date + " " + t[i].Time
+		if dateTime > lastTrade {
 			q += "(?, ?, ?, ?, ?, ?),"
-			dateTime := date + " " + t[i].Time
 			vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, dateTime)
+			newTrades++
 		}
 	}
 	q = q[0:len(q)-1]
 	if len(vals) > 0 {
 		stmt := db.Prepare(q)
 		stmt.Exec(vals...)
+	}
+	if newTrades > 0 {
+		InfoLogger.Printf("Collected %v trades for %v.", newTrades, t[0].Ticker)
 	}
 }

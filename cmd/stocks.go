@@ -19,6 +19,7 @@ type Stock struct {
 func AddStock(s Stock) {
 	stmt := db.Prepare("INSERT INTO stocks(avanzaId, ticker, name) VALUES(?, ?, ?)")
 	stmt.Exec(s.ID, s.Ticker, s.Ticker)
+	InfoLogger.Printf("%v added in stocks table.", s.Ticker)
 }
 
 // AddStocks from a trading platform
@@ -58,24 +59,14 @@ func GetFirstNorth() {
 	"&parameters.selectedFields%5B3%5D=MARKET_CAPITAL_IN_SEK&parameters.selectedFields%5B4%5D=PRICE_PER_EARNINGS&parameters" +
 	".selectedFields%5B5%5D=DIRECT_YIELD&parameters.selectedFields%5B6%5D=NBR_OF_OWNERS&parameters.selectedFields%5B7%5D=LIST"
 	c.Visit(url)
-	AddStocks(stocks)
-}
-
-func getTicker(s Stock) string {
-	c := colly.NewCollector()
-	c.OnHTML("head", func (e *colly.HTMLElement) {
-		u := e.ChildText("title")
-		re := regexp.MustCompile(`\((.*?)\)`)
-		submatchall := re.FindAllString(u, -1)
-		for _, element := range submatchall {
-			element = strings.Trim(element, "(")
-			element = strings.Trim(element, ")")
-			s.Ticker = element
-		}
-	})
-	url := "https://www.avanza.se/aktier/dagens-avslut.html/" + s.ID + "/" + s.Name
-	c.Visit(url)
-	return s.Ticker
+	existingStocks := len(GetStocks())
+	if existingStocks != len(stocks) {
+		AddStocks(stocks)
+		newStocks := len(stocks) - existingStocks
+		InfoLogger.Printf("%v First North stocks added in stocks table.", newStocks)
+	} else {
+		InfoLogger.Println("No new stocks added.")
+	}
 }
 
 // GetStocks from db
@@ -95,4 +86,21 @@ func GetStocks() []Stock {
 		stocks = append(stocks, stock) 
 	}
 	return stocks
+}
+
+func getTicker(s Stock) string {
+	c := colly.NewCollector()
+	c.OnHTML("head", func (e *colly.HTMLElement) {
+		u := e.ChildText("title")
+		re := regexp.MustCompile(`\((.*?)\)`)
+		submatchall := re.FindAllString(u, -1)
+		for _, element := range submatchall {
+			element = strings.Trim(element, "(")
+			element = strings.Trim(element, ")")
+			s.Ticker = element
+		}
+	})
+	url := "https://www.avanza.se/aktier/dagens-avslut.html/" + s.ID + "/" + s.Name
+	c.Visit(url)
+	return s.Ticker
 }
