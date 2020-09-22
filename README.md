@@ -35,3 +35,10 @@ func AddStocks(s []Stock) {
     q = q[0:len(q)-1]
     ...
 ```
+
+## Cron
+Run every 5th minute during trading hours (07:00 - 15:30 UTC) with a 30 minute delay on close.
+
+```bash
+(crontab -l ; echo "*/5 7-16 * * 1-5 %GOPATH/bin/harpun") | crontab -
+```
