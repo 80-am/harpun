@@ -1,3 +1,6 @@
+CREATE DATABASE harpun;
+USE harpun;
+
 # Dump of table stocks
 # ------------------------------------------------------------
 
