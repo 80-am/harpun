@@ -8,9 +8,11 @@ import (
 
 var c Config
 var initDb bool
+var config string
 
 func init() {
-    flag.BoolVar(&initDb, "initDb", false, "Initializes your stocks table with First North Stockholm data")
+	flag.BoolVar(&initDb, "initDb", false, "Initializes your stocks table with First North Stockholm data")
+	flag.StringVar(&config, "config", "", "Path to your config.yml")
     flag.Parse()
 }
 
@@ -26,7 +28,7 @@ func isFlagPassed(name string) bool {
 
 // Main for harpun app
 func Main() {
-	c.GetConfig()
+	c.GetConfig(config)
 	database, err := db.Init(c.DbUser, c.DbPassword, c.DbSchema)
 	if err != nil {
 		panic(err.Error())
