@@ -19,7 +19,7 @@ type Stock struct {
 func AddStock(s Stock) {
 	stmt := db.Prepare("INSERT INTO stocks(avanzaId, ticker, name) VALUES(?, ?, ?)")
 	stmt.Exec(s.ID, s.Ticker, s.Ticker)
-	InfoLogger.Printf("%v added in stocks table.", s.Ticker)
+	InfoLogger.Printf("%v added.", s.Ticker)
 }
 
 // AddStocks from a trading platform

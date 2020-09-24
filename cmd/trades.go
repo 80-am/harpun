@@ -30,7 +30,8 @@ func GetDailyTrades(s Stock) {
 		t.Seller = e.ChildText(".tLeft:nth-child(2)")
 		a := e.ChildText(":nth-child(3)")
 		t.Amount, _ = strconv.ParseInt(strings.Join(strings.Fields(strings.TrimSpace(a)), ""),10, 64)
-		t.Price = strings.Replace(e.ChildText(":nth-child(4)"), ",", ".", -1)
+		p := strings.Replace(e.ChildText(":nth-child(4)"), ",", ".", -1)
+		t.Price = strings.Join(strings.Fields(strings.TrimSpace(p)), "")
 		t.Time = e.ChildText(".last")
 		if t.Time != "" {
 			trades = append(trades, t)
@@ -58,10 +59,11 @@ func updateTrades(t []Trade) {
 	newTrades := 0
 	for i := len(t)-1; i >= 0; i-- {
 		dateTime := date + " " + t[i].Time
-		if dateTime > lastTrade {
+		if dateTime > lastTrade && (t[i].Seller != "-" && t[i].Buyer != "-") {
 			q += "(?, ?, ?, ?, ?, ?),"
 			vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, dateTime)
 			newTrades++
+			DetectWhale(t[i])
 		}
 	}
 	q = q[0:len(q)-1]
