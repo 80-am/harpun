@@ -13,8 +13,8 @@ func DetectWhale(t Trade) {
 	if avgAmount == 0 {
 		return
 	}
-	fiftyTimes := avgAmount * 5
-	if t.Amount > fiftyTimes {
+	fiveTimes := avgAmount * 5
+	if t.Amount > fiveTimes {
 		price, _ := strconv.ParseFloat(t.Price, 8)
 		totalPrice := math.Round((float64(t.Amount) * price) * 100) / 100
 		alert(t, totalPrice)
