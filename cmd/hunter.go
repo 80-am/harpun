@@ -3,6 +3,7 @@ package cmd
 import (
 	"math"
 	"strconv"
+	"time"
 
 	"github.com/80-am/harpun/db"
 )
@@ -51,10 +52,12 @@ func alert(t Trade, tp float64) {
 	r := db.QueryRow("SELECT time FROM alerts WHERE ticker = (?) ORDER BY time DESC LIMIT 1;", t.Ticker)
 	var lastAlert string
 	r.Scan(&lastAlert)
-	if lastAlert != t.Time {
+	date := time.Now().Format("2006-01-02")
+	dateTime := date + " " + t.Time
+	if lastAlert != dateTime {
 		stmt := db.Prepare("INSERT INTO alerts(ticker, amount, price, totalPrice, time) VALUES (?, ?, ?, ?, ?)")
-		stmt.Exec(t.Ticker, t.Amount, t.Price, tp, t.Time)
-		AlertLogger.Printf("%v SHARES TRANSFERRED AT %v FOR A TOTAL OF %.2fSEK AT TIME %v IN %v!", t.Amount, t.Price, tp, t.Time, t.Ticker)
+		stmt.Exec(t.Ticker, t.Amount, t.Price, tp, dateTime)
+		AlertLogger.Printf("%v SHARES TRANSFERRED AT %v FOR A TOTAL OF %.2fSEK AT TIME %v IN %v!", t.Amount, t.Price, tp, dateTime, t.Ticker)
 	}
 }
 
