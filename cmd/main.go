@@ -11,6 +11,8 @@ import (
 var c Config
 var initDb bool
 var config string
+// Multiplier defining large trades
+var Multiplier int64
 // WarningLogger for harpun
 var WarningLogger *log.Logger
 // InfoLogger for harpun
@@ -48,6 +50,11 @@ func isFlagPassed(name string) bool {
 func Main() {
 	InfoLogger.Println("Harpun started.")
 	c.GetConfig(config)
+	if c.Multiplier != 0 {
+		Multiplier = c.Multiplier
+	} else {
+		Multiplier = 5
+	}
 	database, err := db.Init(c.DbUser, c.DbPassword, c.DbSchema)
 	if err != nil {
 		ErrorLogger.Println(err.Error())

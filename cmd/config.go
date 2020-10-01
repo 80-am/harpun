@@ -12,6 +12,7 @@ type Config struct {
     DbUser       string `yaml:"user"`
     DbPassword   string `yaml:"password"`
     DbSchema     string `yaml:"schema"`
+    Multiplier   int64  `yaml:"multiplier"`
 }
 
 // GetConfig of user

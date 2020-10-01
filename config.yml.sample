@@ -2,3 +2,6 @@
 user: "your db user"
 password: "your db password"
 schema: "/harpun"
+
+# Multiplier to define large trades (int64)
+multiplier: 10
