@@ -11,6 +11,7 @@ import (
 var c Config
 var initDb bool
 var config string
+var logPath string
 // Multiplier defining large trades
 var Multiplier int64
 // Hook configuration to be used
@@ -25,12 +26,13 @@ var ErrorLogger *log.Logger
 var AlertLogger *log.Logger 
 
 func init() {
-	c.GetConfig(config)
 	flag.BoolVar(&initDb, "initDb", false, "Initializes your stocks table with First North Stockholm data")
 	flag.StringVar(&config, "config", "", "Path to your config.yml")
 	flag.Parse()
+}
 
-	var logPath string
+func initLog() {
+	c.GetConfig(config)
 	if c.LogPath == "" {
 		logPath = "./harpun.log"
 	} else {
@@ -58,6 +60,7 @@ func isFlagPassed(name string) bool {
 
 // Main for harpun app
 func Main() {
+	initLog()
 	InfoLogger.Println("Harpun started.")
 	Hook = c.Hook
 	if c.Multiplier != 0 {
