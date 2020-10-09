@@ -13,6 +13,7 @@ type Config struct {
     DbPassword   string `yaml:"password"`
     DbSchema     string `yaml:"schema"`
     Hook         bool   `yaml:"hook"`
+    LogPath      string `yaml:"log"`
     Multiplier   int64  `yaml:"multiplier"`
 }
 

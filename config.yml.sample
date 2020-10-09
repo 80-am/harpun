@@ -8,3 +8,6 @@ multiplier: 10
 
 # Custom hooks to be used with other systems
 hook: false
+
+# Log directory location
+log: ""

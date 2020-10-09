@@ -25,10 +25,18 @@ var ErrorLogger *log.Logger
 var AlertLogger *log.Logger 
 
 func init() {
+	c.GetConfig(config)
 	flag.BoolVar(&initDb, "initDb", false, "Initializes your stocks table with First North Stockholm data")
 	flag.StringVar(&config, "config", "", "Path to your config.yml")
 	flag.Parse()
-	file, err := os.OpenFile("harpun.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+
+	var logPath string
+	if c.LogPath == "" {
+		logPath = "./harpun.log"
+	} else {
+		logPath = c.LogPath
+	}
+	file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
     if err != nil {
         log.Fatal(err)
 	}
@@ -51,7 +59,6 @@ func isFlagPassed(name string) bool {
 // Main for harpun app
 func Main() {
 	InfoLogger.Println("Harpun started.")
-	c.GetConfig(config)
 	Hook = c.Hook
 	if c.Multiplier != 0 {
 		Multiplier = c.Multiplier
