@@ -9,7 +9,7 @@ import (
 )
 
 // DetectWhale aka unusual large trade
-func DetectWhale(t Trade) {
+func DetectWhale(s Stock, t Trade) {
 	avgAmount := getAverageAmount(t.Ticker)
 	if avgAmount == 0 {
 		return
@@ -18,7 +18,7 @@ func DetectWhale(t Trade) {
 	if t.Amount > unusualAmount {
 		price, _ := strconv.ParseFloat(t.Price, 8)
 		totalPrice := math.Round((float64(t.Amount) * price) * 100) / 100
-		alert(t, totalPrice)
+		alert(s, t, totalPrice)
 	}
 }
 
@@ -48,7 +48,7 @@ func UpdateAverageAmounts(s Stock) {
 	}
 }
 
-func alert(t Trade, tp float64) {
+func alert(s Stock, t Trade, tp float64) {
 	r := db.QueryRow("SELECT time FROM alerts WHERE ticker = (?) ORDER BY time DESC LIMIT 1;", t.Ticker)
 	var lastAlert string
 	r.Scan(&lastAlert)
@@ -58,6 +58,9 @@ func alert(t Trade, tp float64) {
 		stmt := db.Prepare("INSERT INTO alerts(ticker, amount, price, totalPrice, time) VALUES (?, ?, ?, ?, ?)")
 		stmt.Exec(t.Ticker, t.Amount, t.Price, tp, dateTime)
 		AlertLogger.Printf("%v SHARES TRANSFERRED AT %v FOR A TOTAL OF %.2fSEK AT TIME %v IN %v!", t.Amount, t.Price, tp, dateTime, t.Ticker)
+		if (Hook) {
+			AlertHook(s, t, tp)
+		}
 	}
 }
 

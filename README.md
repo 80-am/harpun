@@ -1,4 +1,4 @@
-# harpun
+# <img src="./harpun.png" height="28">harpun
 [![Build Status](https://travis-ci.com/80-am/harpun.svg?branch=master&status=started)](https://travis-ci.com/80-am/harpun)
 [![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/80-am/harpun)](https://golang.org/)
 [![License: GPL-3.0](https://img.shields.io/github/license/80-am/harpun)](https://opensource.org/licenses/GPL-3.0)
@@ -15,10 +15,12 @@ SOURCE db.sql;
 Copy [config.yml.sample](config.yml.sample) into config.yml and fill in your secrets.
 
 ```yml
-# db
 user: "your db user"
 password: "your db password"
 schema: "/harpun"
+
+multiplier: 10
+hook: false
 ```
 
 Init stocks table with [First North Stockholm](http://www.nasdaqomxnordic.com/shares/listed-companies/first-north) by parsing `-initDb=true` or by calling `AddStocks()` with a custom set of stocks.
@@ -33,6 +35,14 @@ func AddStocks(s []Stock) {
 	}
     q = q[0:len(q)-1]
     ...
+```
+
+## Hooks
+Configure custom hooks in [hooks.go](cmd/hooks.go) and by setting `hook: true` in [config.yml](config.yml).
+```go
+func AlertHook(s Stock, t Trade, tp float64) {
+	// My custom alert hook to be configured here...
+}
 ```
 
 ## Cron

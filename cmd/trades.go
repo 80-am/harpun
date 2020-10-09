@@ -40,7 +40,7 @@ func GetDailyTrades(s Stock) {
 	url := "https://www.avanza.se/aktier/dagens-avslut.html/" + s.ID + "/" + s.Name
 	c.Visit(url)
 	if len(trades) > 0 {
-		updateTrades(trades)
+		updateTrades(s, trades)
 	}
 }
 
@@ -51,7 +51,7 @@ func getLastTrade(t Trade) string {
 	return lastTrade
 }
 
-func updateTrades(t []Trade) {
+func updateTrades(s Stock, t []Trade) {
 	q := "INSERT INTO trades(ticker, buyer, seller, amount, price, time) VALUES "
 	vals := []interface{}{}
 	lastTrade := getLastTrade(t[0])
@@ -63,7 +63,7 @@ func updateTrades(t []Trade) {
 			q += "(?, ?, ?, ?, ?, ?),"
 			vals = append(vals, t[i].Ticker, t[i].Buyer, t[i].Seller, t[i].Amount, t[i].Price, dateTime)
 			newTrades++
-			DetectWhale(t[i])
+			DetectWhale(s, t[i])
 		}
 	}
 	q = q[0:len(q)-1]

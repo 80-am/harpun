@@ -13,6 +13,8 @@ var initDb bool
 var config string
 // Multiplier defining large trades
 var Multiplier int64
+// Hook configuration to be used
+var Hook bool
 // WarningLogger for harpun
 var WarningLogger *log.Logger
 // InfoLogger for harpun
@@ -50,6 +52,7 @@ func isFlagPassed(name string) bool {
 func Main() {
 	InfoLogger.Println("Harpun started.")
 	c.GetConfig(config)
+	Hook = c.Hook
 	if c.Multiplier != 0 {
 		Multiplier = c.Multiplier
 	} else {

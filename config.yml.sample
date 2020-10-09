@@ -5,3 +5,6 @@ schema: "/harpun"
 
 # Multiplier to define large trades (int64)
 multiplier: 10
+
+# Custom hooks to be used with other systems
+hook: false
