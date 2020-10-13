@@ -57,7 +57,7 @@ func alert(s Stock, t Trade, tp float64) {
 	if lastAlert != dateTime {
 		stmt := db.Prepare("INSERT INTO alerts(ticker, amount, price, totalPrice, time) VALUES (?, ?, ?, ?, ?)")
 		stmt.Exec(t.Ticker, t.Amount, t.Price, tp, dateTime)
-		AlertLogger.Printf("%s %v shares bought @ %s for a total of %.2f SEK (Trade time: %s)\n", t.Ticker, t.Amount, t.Price, tp, dateTime)
+		AlertLogger.Printf("%s %v shares transferred @ %s for a total of %.2f SEK (Trade time: %s)\n", t.Ticker, t.Amount, t.Price, tp, dateTime)
 		if (Hook) {
 			AlertHook(s, t, tp)
 		}
