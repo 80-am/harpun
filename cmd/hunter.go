@@ -43,7 +43,7 @@ func UpdateAverageAmounts(s Stock) {
 		if avgAmount != avgTradeAmount {
 			stmt := db.Prepare("UPDATE stocks SET avgTradeAmount = ? WHERE ticker = ?;")
 			stmt.Exec(avgTradeAmount, s.Ticker)
-			InfoLogger.Printf("New trade average %v for %v", avgTradeAmount, s.Ticker)
+			InfoLogger.Printf("New trade average %v for %v.", avgTradeAmount, s.Ticker)
 		}
 	}
 }
